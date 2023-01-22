@@ -1,0 +1,24 @@
+shader fakeToonOSL(   
+    color input_tex = color(1.0, 1.0, 1.0)[[string label = "Colour"]],
+    float line_sharpness = 0.9 [[string label = "Line Sharpness", float min = 0, float max = 1 ]],
+    float line_thickness = 0.35 [[string label = "Line Thickness", float min = 0, float max = 1 ]],
+    float shadow_opacity = 0.5 [[string label = "Shadow Opacity", float min = 0, float max = 1]],
+    float highlight_sharpness = 0.01 [[string label = "Highlight Sharpness", float min = 0, float max = 1 ]],
+    float highlight_coverage = 0.35 [[string label = "Highlight Coverage", float min = 0, float max = 1 ]],
+    float highlight_opacity = 0.5 [[string label = "Highlight Opacity", float min = 0, float max = 1]],
+    output color result = 0)
+{
+    
+    vector i = normalize(I);
+    vector n = normalize(N);
+    float j = dot(-i, n);
+    float k = j;
+    
+    j = smoothstep(line_thickness, 1-line_sharpness, j);
+    color outlines = mix(1.0, 0.0, j);
+    
+    k = smoothstep(1-highlight_coverage, 1-highlight_sharpness, k);
+    color highlight = mix(0.0, 1.0, k);
+
+    result = input_tex - (outlines*shadow_opacity) + (highlight*highlight_opacity);
+} 
